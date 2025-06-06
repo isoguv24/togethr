@@ -19,7 +19,11 @@ import {
   Heart,
   MessageCircle,
   Video,
-  Zap
+  Zap,
+  BarChart3,
+  Brain,
+  AlertTriangle,
+  Shield
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -137,6 +141,67 @@ export default function Dashboard() {
                       {user.xp} XP
                     </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Crisis Support Banner */}
+            <Card className="border-red-200 bg-gradient-to-r from-red-50 to-pink-50">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-red-100 rounded-full">
+                      <Shield className="h-6 w-6 text-red-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-red-900">Need immediate support?</h3>
+                      <p className="text-sm text-red-700">Crisis resources and coping strategies are available 24/7</p>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => setCurrentView('crisis')}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    <AlertTriangle className="mr-2 h-4 w-4" />
+                    Get Help Now
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Mood Check */}
+            <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Brain className="h-5 w-5 text-green-600" />
+                  <span>Daily Mood Check</span>
+                </CardTitle>
+                <CardDescription>
+                  How are you feeling today? Take a moment to track your mood.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex space-x-2">
+                      {['😢', '😔', '😐', '😊', '😄'].map((emoji, index) => (
+                        <button 
+                          key={index} 
+                          className="text-2xl hover:scale-110 transition-transform p-2 rounded-lg hover:bg-white/50"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="outline"
+                    onClick={() => setCurrentView('mood')}
+                  >
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Track Mood
+                  </Button>
                 </div>
               </CardContent>
             </Card>
