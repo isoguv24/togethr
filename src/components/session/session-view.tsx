@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import CategoryAwareModerator from '@/components/moderator/category-aware-moderator';
 import { 
   Video, 
   VideoOff, 
@@ -26,6 +27,7 @@ import { cn } from '@/lib/utils';
 export default function SessionView() {
   const [message, setMessage] = useState('');
   const [showParticipants, setShowParticipants] = useState(true);
+  const [sessionStartTime] = useState<number>(Date.now());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   
@@ -37,6 +39,7 @@ export default function SessionView() {
     isVideoEnabled,
     isAudioEnabled,
     sendMessage,
+    addMessage,
     leaveSession,
     toggleVideo,
     toggleAudio
@@ -57,25 +60,23 @@ export default function SessionView() {
     }
   }, [isVideoEnabled]);
 
-  // Simulate AI moderator messages
-  useEffect(() => {
-    if (currentSession && messages.length === 0) {
-      // Welcome message from AI moderator
-      setTimeout(() => {
-        const welcomeMessage = {
-          id: `ai_${Date.now()}`,
-          sessionId: currentSession.id,
-          senderId: currentSession.moderator.id,
-          senderType: 'ai_moderator' as const,
-          content: `Welcome everyone! I'm ${currentSession.moderator.name}, your AI moderator for today's session. This is a safe space where we can share and support each other. Would anyone like to start by sharing how they're feeling today?`,
-          timestamp: new Date(),
-          type: 'ai_prompt' as const,
-          reactions: []
-        };
-        useTogethrStore.getState().addMessage(welcomeMessage);
-      }, 2000);
-    }
-  }, [currentSession, messages.length]);
+  // Handle AI moderator messages
+  const handleModeratorMessage = (content: string) => {
+    if (!currentSession || !user) return;
+    
+    const moderatorMessage = {
+      id: `ai_${Date.now()}`,
+      sessionId: currentSession.id,
+      senderId: currentSession.moderator.id,
+      senderType: 'ai_moderator' as const,
+      content,
+      timestamp: new Date(),
+      type: 'ai_prompt' as const,
+      reactions: []
+    };
+    
+    addMessage(moderatorMessage);
+  };
 
   if (!currentSession || !user) {
     return (
@@ -91,30 +92,6 @@ export default function SessionView() {
     if (message.trim()) {
       sendMessage(message.trim());
       setMessage('');
-      
-      // Simulate AI response after user message
-      setTimeout(() => {
-        const responses = [
-          "Thank you for sharing that. Can others relate to this experience?",
-          "That sounds really challenging. How are you coping with that?",
-          "I appreciate your openness. What support would be most helpful right now?",
-          "That's a valuable insight. How has this affected your daily life?",
-          "Thank you for being vulnerable with us. What would you want others to know about this?"
-        ];
-        
-        const aiResponse = {
-          id: `ai_${Date.now()}`,
-          sessionId: currentSession.id,
-          senderId: currentSession.moderator.id,
-          senderType: 'ai_moderator' as const,
-          content: responses[Math.floor(Math.random() * responses.length)],
-          timestamp: new Date(),
-          type: 'ai_prompt' as const,
-          reactions: []
-        };
-        
-        useTogethrStore.getState().addMessage(aiResponse);
-      }, 3000 + Math.random() * 2000);
     }
   };
 
@@ -131,6 +108,18 @@ export default function SessionView() {
 
   return (
     <div className="h-screen bg-gray-100 flex flex-col">
+      {/* CategoryAwareModerator - handles AI responses */}
+      {currentSession && user && (
+        <CategoryAwareModerator
+          category={currentSession.topic}
+          incomingMessages={messages}
+          onModeratorMessage={handleModeratorMessage}
+          userCount={mockParticipants.length}
+          isActive={true}
+          sessionDurationMs={Date.now() - sessionStartTime}
+        />
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
