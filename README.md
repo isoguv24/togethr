@@ -2,14 +2,35 @@
 
 An anonymous AI-moderated group therapy platform designed to provide safe mental health support through virtual group sessions.
 
+## 🧪 Live Demo
+Try the project live: [togethr-iso.vercel.app](https://togethr-iso.vercel.app)
+
 ## Features
 
-- **Anonymous Participation**: Join sessions with complete anonymity using nicknames
-- **AI-Powered Moderation**: Intelligent AI moderators facilitate therapeutic conversations
-- **Mental Health Focus Areas**: Support for anxiety, depression, grief, trauma, and more
-- **Flexible Participation**: Chat-only or video-enabled session modes
-- **Gamification**: XP system and achievement badges to encourage engagement
-- **Real-time Communication**: Live chat and video capabilities for authentic connection
+### 🎭 Anonymous Participation
+Join sessions with complete anonymity using nicknames and custom avatars
+
+### 🤖 AI-Powered Moderation
+- **CategoryAwareModerator**: Intelligent AI moderators with category-specific behaviors
+- **Dual Mode Support**: Both structured therapy sessions and casual community chat
+- **Real-time Analysis**: Message analysis, distress detection, and safety interventions
+- **Smart Timing**: Silence detection and context-aware check-ins
+
+### 🧠 Mental Health Focus
+Support for 10+ mental health areas: anxiety, depression, grief, trauma, loneliness, self-esteem, and more
+
+### 💬 Two Types of Support
+- **Scheduled Group Therapy**: 45-60 minute structured sessions with active moderation
+- **Community Chat**: 24/7 always-active support communities (Reddit-style)
+
+### 🎮 Gamification
+XP system and achievement badges to encourage engagement and progress
+
+### 🔗 Real-time Communication
+Live chat and video capabilities for authentic connection
+
+### 🎨 Personalization
+Choose from 12 unique avatars with distinct personalities
 
 ## Tech Stack
 
@@ -54,41 +75,57 @@ npm run dev
 src/
 ├── app/                    # Next.js app router
 ├── components/             # React components
+│   ├── community/          # Community chat interface
 │   ├── dashboard/          # Dashboard views
 │   ├── feedback/           # Session feedback
+│   ├── moderator/          # AI moderator components
 │   ├── onboarding/         # User onboarding flow
 │   ├── profile/            # User profile management
 │   ├── session/            # Live session interface
 │   └── ui/                 # Reusable UI components
 ├── data/                   # Static data and configurations
+│   ├── avatars.ts          # Avatar definitions
+│   ├── badges.ts           # Gamification badges
+│   └── topics.ts           # Mental health topics
 ├── lib/                    # Utilities and store
+│   ├── moderator/          # AI moderator system
+│   └── store.ts            # Zustand state management
 └── types/                  # TypeScript type definitions
 ```
 
 ## Key Components
 
+### CategoryAwareModerator System
+- **Dual Mode AI**: Adapts behavior for therapy sessions vs. community chat
+- **Category-Specific Prompts**: Tailored responses for 10+ mental health topics
+- **Safety-First**: Crisis detection and professional support encouragement
+- **Smart Timing**: Configurable silence detection and check-in intervals
+
 ### Onboarding Flow
-- Welcome introduction
-- Nickname selection
-- Mental health topic selection
-- Session preferences
-- Avatar customization
+- Welcome introduction and privacy explanation
+- Nickname selection with validation
+- Mental health topic selection (10+ categories)
+- Session preferences (chat/video modes)
+- Avatar customization (12 unique options)
 
 ### Dashboard
-- User statistics and progress
-- Session queue management
-- Quick access to profile settings
+- **Dual Access**: Both scheduled sessions and community chat
+- User statistics and progress tracking
+- Session queue management with wait times
+- Quick mood tracking and crisis support access
 
-### Live Sessions
-- Real-time chat interface
-- Video participant grid
-- AI moderator interactions
-- Session controls
+### Live Sessions & Community Chat
+- **Scheduled Sessions**: Structured 45-60 minute group therapy
+- **Community Chat**: 24/7 Reddit-style support groups
+- Real-time chat with AI moderation
+- Video participant grid for sessions
+- Anonymous participation with avatars
 
-### Feedback System
+### Feedback & Analytics
 - Multi-step rating interface
 - Detailed feedback collection
 - AI-generated session summaries
+- Participation analytics and insights
 
 ## Contributing
 
