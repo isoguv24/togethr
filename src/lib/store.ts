@@ -29,9 +29,29 @@ interface MatchmakingState {
   queueStartTime: Date | null;
 }
 
+interface MoodEntry {
+  id: string;
+  userId: string;
+  date: string; // YYYY-MM-DD format
+  mood: number; // 1-10 scale
+  energy: number; // 1-10 scale
+  anxiety: number; // 1-10 scale
+  notes: string;
+  activities: string[];
+  triggers: string[];
+  timestamp: Date;
+}
+
+interface MoodState {
+  entries: MoodEntry[];
+  currentStreak: number;
+  longestStreak: number;
+  monthlyStats: { [month: string]: { averageMood: number; totalEntries: number } };
+}
+
 interface UIState {
   sidebarOpen: boolean;
-  currentView: 'dashboard' | 'session' | 'feedback' | 'profile' | 'onboarding';
+  currentView: 'dashboard' | 'session' | 'feedback' | 'profile' | 'onboarding' | 'mood' | 'crisis';
   notifications: Notification[];
   isVideoEnabled: boolean;
   isAudioEnabled: boolean;
@@ -47,7 +67,7 @@ interface Notification {
   read: boolean;
 }
 
-interface TogethrStore extends AuthState, SessionState, MatchmakingState, UIState {
+interface TogethrStore extends AuthState, SessionState, MatchmakingState, UIState, MoodState {
   // Auth Actions
   setUser: (user: User | null) => void;
   updateUser: (updates: Partial<User>) => void;
@@ -83,6 +103,13 @@ interface TogethrStore extends AuthState, SessionState, MatchmakingState, UIStat
   awardXP: (amount: number, reason: string) => void;
   unlockBadge: (badgeId: string) => void;
   levelUp: (newLevel: number) => void;
+
+  // Mood Actions
+  saveMoodEntry: (entry: Omit<MoodEntry, 'id' | 'userId' | 'timestamp'>) => void;
+  getMoodEntry: (date: string) => MoodEntry | undefined;
+  getMoodEntries: (startDate: string, endDate: string) => MoodEntry[];
+  calculateMoodStats: () => { weeklyAverage: number; monthlyAverage: number; trend: 'up' | 'down' | 'stable' };
+  updateMoodStreaks: () => void;
 }
 
 export const useTogethrStore = create<TogethrStore>()(
@@ -118,6 +145,12 @@ export const useTogethrStore = create<TogethrStore>()(
         isVideoEnabled: false,
         isAudioEnabled: true,
         selectedAvatarId: null,
+
+        // Initial Mood State
+        entries: [],
+        currentStreak: 0,
+        longestStreak: 0,
+        monthlyStats: {},
 
         // Auth Actions
         setUser: (user) => set({ user, isAuthenticated: !!user }),
@@ -467,6 +500,144 @@ export const useTogethrStore = create<TogethrStore>()(
             title: 'Level Up!',
             message: `Congratulations! You reached level ${newLevel}!`
           });
+        },
+
+        // Mood Actions
+        saveMoodEntry: (entry) => {
+          const user = get().user;
+          if (!user) return;
+
+          const today = entry.date;
+          const newEntry: MoodEntry = {
+            ...entry,
+            id: `mood_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            userId: user.id,
+            timestamp: new Date()
+          };
+
+          set((state) => {
+            // Remove existing entry for the same date
+            const filteredEntries = state.entries.filter(e => e.date !== today);
+            const newEntries = [...filteredEntries, newEntry].sort((a, b) => 
+              new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+
+            return { entries: newEntries };
+          });
+
+          // Update streaks and monthly stats
+          get().updateMoodStreaks();
+          
+          // Award XP
+          get().awardXP(10, 'Daily mood tracking');
+
+          get().addNotification({
+            type: 'success',
+            title: 'Mood Saved!',
+            message: `Your mood entry for ${today} has been recorded.`
+          });
+        },
+
+        getMoodEntry: (date) => {
+          return get().entries.find(entry => entry.date === date);
+        },
+
+        getMoodEntries: (startDate, endDate) => {
+          return get().entries.filter(entry => 
+            entry.date >= startDate && entry.date <= endDate
+          );
+        },
+
+        calculateMoodStats: () => {
+          const entries = get().entries;
+          const now = new Date();
+          const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+          const weeklyEntries = entries.filter(entry => 
+            new Date(entry.date) >= oneWeekAgo
+          );
+          const monthlyEntries = entries.filter(entry => 
+            new Date(entry.date) >= oneMonthAgo
+          );
+
+          const weeklyAverage = weeklyEntries.length > 0
+            ? weeklyEntries.reduce((sum, entry) => sum + entry.mood, 0) / weeklyEntries.length
+            : 0;
+
+          const monthlyAverage = monthlyEntries.length > 0
+            ? monthlyEntries.reduce((sum, entry) => sum + entry.mood, 0) / monthlyEntries.length
+            : 0;
+
+          // Calculate trend (comparing first half vs second half of week)
+          let trend: 'up' | 'down' | 'stable' = 'stable';
+          if (weeklyEntries.length >= 4) {
+            const firstHalf = weeklyEntries.slice(-4, -2);
+            const secondHalf = weeklyEntries.slice(-2);
+            
+            const firstAvg = firstHalf.reduce((sum, e) => sum + e.mood, 0) / firstHalf.length;
+            const secondAvg = secondHalf.reduce((sum, e) => sum + e.mood, 0) / secondHalf.length;
+            
+            if (secondAvg > firstAvg + 0.5) trend = 'up';
+            else if (secondAvg < firstAvg - 0.5) trend = 'down';
+          }
+
+          return { weeklyAverage, monthlyAverage, trend };
+        },
+
+        updateMoodStreaks: () => {
+          const entries = get().entries.sort((a, b) => 
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+
+          let currentStreak = 0;
+          let longestStreak = 0;
+          let tempStreak = 0;
+
+          const today = new Date().toISOString().split('T')[0];
+          let checkDate = new Date();
+
+          // Calculate current streak
+          for (let i = 0; i < 30; i++) { // Check last 30 days
+            const dateStr = checkDate.toISOString().split('T')[0];
+            const hasEntry = entries.some(entry => entry.date === dateStr);
+            
+            if (hasEntry) {
+              if (dateStr === today || i === currentStreak) {
+                currentStreak++;
+              } else {
+                break;
+              }
+            } else if (dateStr === today) {
+              break; // No entry today, streak broken
+            } else {
+              break;
+            }
+            
+            checkDate.setDate(checkDate.getDate() - 1);
+          }
+
+          // Calculate longest streak
+          for (let i = 0; i < entries.length; i++) {
+            if (i === 0) {
+              tempStreak = 1;
+            } else {
+              const currentDate = new Date(entries[i].date);
+              const prevDate = new Date(entries[i - 1].date);
+              const diffTime = prevDate.getTime() - currentDate.getTime();
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              
+              if (diffDays === 1) {
+                tempStreak++;
+              } else {
+                longestStreak = Math.max(longestStreak, tempStreak);
+                tempStreak = 1;
+              }
+            }
+          }
+          longestStreak = Math.max(longestStreak, tempStreak);
+
+          set({ currentStreak, longestStreak });
         }
       }),
       {
