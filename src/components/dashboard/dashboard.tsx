@@ -270,6 +270,43 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
+            {/* Community Chat Card */}
+            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="h-6 w-6 text-purple-600" />
+                  <span>Community Support</span>
+                </CardTitle>
+                <CardDescription>
+                  Join always-active support communities. Connect with others 24/7 who understand your journey.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>Always Active</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <MessageCircle className="h-4 w-4" />
+                      <span>Chat & Support</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => setCurrentView('community')}
+                    size="lg"
+                    variant="outline"
+                    className="bg-white hover:bg-purple-50 border-purple-200"
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    Join Communities
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Stats Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
@@ -369,6 +406,14 @@ export default function Dashboard() {
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => setCurrentView('community')}
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Community Support
+                </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
