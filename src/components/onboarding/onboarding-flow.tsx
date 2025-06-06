@@ -27,7 +27,7 @@ export default function OnboardingFlow() {
 
   const { login, isLoading } = useTogethrStore();
   const topics = getAllTopics();
-  const avatars = getAvatarsForLevel(10); // Show 10 avatars in onboarding
+  const avatars = getAvatarsForLevel(12); // Show 12 avatars in onboarding
 
   const steps: OnboardingStep[] = ['welcome', 'nickname', 'topic', 'preferences', 'avatar', 'complete'];
   const currentStepIndex = steps.indexOf(currentStep);
@@ -289,7 +289,7 @@ export default function OnboardingFlow() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-4 max-w-lg mx-auto">
         {avatars.map((avatar) => (
           <Card
             key={avatar.id}
@@ -300,13 +300,13 @@ export default function OnboardingFlow() {
             }`}
             onClick={() => setFormData({ ...formData, selectedAvatarId: avatar.id })}
           >
-            <CardContent className="p-4 text-center">
-              <Avatar className="w-16 h-16 mx-auto mb-2">
+            <CardContent className="p-3 text-center">
+              <Avatar className="w-12 h-12 mx-auto mb-2">
                 <AvatarImage src={avatar.imageUrl} alt={avatar.name} />
                 <AvatarFallback>{avatar.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
-              <h3 className="font-medium text-sm">{avatar.name}</h3>
-              <p className="text-xs text-gray-600 mt-1">{avatar.personality}</p>
+              <h3 className="font-medium text-xs">{avatar.name}</h3>
+              <p className="text-xs text-gray-600 mt-1 leading-tight">{avatar.personality}</p>
             </CardContent>
           </Card>
         ))}
