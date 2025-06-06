@@ -51,7 +51,7 @@ interface MoodState {
 
 interface UIState {
   sidebarOpen: boolean;
-  currentView: 'dashboard' | 'session' | 'feedback' | 'profile' | 'onboarding' | 'mood' | 'crisis';
+  currentView: 'dashboard' | 'session' | 'feedback' | 'profile' | 'onboarding' | 'mood' | 'crisis' | 'community';
   notifications: Notification[];
   isVideoEnabled: boolean;
   isAudioEnabled: boolean;

@@ -10,6 +10,7 @@ import ProfileView from '@/components/profile/profile-view';
 import HeroSection from '@/components/landing/hero-section';
 import MoodTracker from '@/components/mood/mood-tracker';
 import CrisisSupport from '@/components/crisis/crisis-support';
+import CommunityChat from '@/components/community/community-chat';
 import NotificationToast from '@/components/ui/notification-toast';
 
 export default function Home() {
@@ -54,6 +55,8 @@ export default function Home() {
         return <MoodTracker />;
       case 'crisis':
         return <CrisisSupport />;
+      case 'community':
+        return <CommunityChat />;
       default:
         return <Dashboard />;
     }
