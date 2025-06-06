@@ -95,6 +95,24 @@ export const AVATARS: AvatarConfig[] = [
     unlockedAtLevel: 8,
     personality: 'Energetic and uplifting',
     description: 'A colorful bird that brings joy and energy'
+  },
+  {
+    id: 'strong_eagle',
+    name: 'Strong Eagle',
+    imageUrl: '/avatars/strong-eagle.svg',
+    isCustom: false,
+    unlockedAtLevel: 9,
+    personality: 'Bold and inspiring',
+    description: 'A majestic eagle that soars above challenges'
+  },
+  {
+    id: 'loyal_dog',
+    name: 'Loyal Dog',
+    imageUrl: '/avatars/loyal-dog.svg',
+    isCustom: false,
+    unlockedAtLevel: 10,
+    personality: 'Faithful and supportive',
+    description: 'A loyal companion that never leaves your side'
   }
 ];
 

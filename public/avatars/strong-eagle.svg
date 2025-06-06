@@ -1,0 +1,23 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Eagle head background -->
+  <circle cx="50" cy="50" r="45" fill="#8B4513"/>
+  
+  <!-- Eagle beak -->
+  <path d="M 35 50 Q 25 55 30 65 Q 35 60 40 55" fill="#FFD700"/>
+  
+  <!-- Eagle eyes -->
+  <circle cx="45" cy="40" r="4" fill="#2C3E50"/>
+  <circle cx="65" cy="40" r="4" fill="#2C3E50"/>
+  <circle cx="46" cy="39" r="1" fill="#FFFFFF"/>
+  <circle cx="66" cy="39" r="1" fill="#FFFFFF"/>
+  
+  <!-- Eagle feathers on head -->
+  <path d="M 30 25 Q 35 15 40 25" fill="#654321"/>
+  <path d="M 40 20 Q 45 10 50 20" fill="#654321"/>
+  <path d="M 50 20 Q 55 10 60 20" fill="#654321"/>
+  <path d="M 60 25 Q 65 15 70 25" fill="#654321"/>
+  
+  <!-- Eagle markings -->
+  <path d="M 25 55 Q 30 60 35 55" fill="#654321"/>
+  <path d="M 65 55 Q 70 60 75 55" fill="#654321"/>
+</svg> 
