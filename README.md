@@ -1,9 +1,16 @@
-# Togethr
+# Togethr 🧠💚
 
-An anonymous AI-moderated group therapy platform designed to provide safe mental health support through virtual group sessions.
+> **A Next.js mental health platform with Supabase backend** that enables topic-based community support, real-time chat, gamification, and mood tracking for mental wellness.
+
+[![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2015-black?logo=nextjs)](https://nextjs.org/)
+[![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 ## 🧪 Live Demo
 Try the project live: [togethr-iso.vercel.app](https://togethr-iso.vercel.app)
+
+> **🚀 NEW: Now with Supabase Backend!** This version includes real-time chat, persistent data, user authentication, and mood tracking.
 
 ## Features
 
@@ -34,64 +41,112 @@ Choose from 12 unique avatars with distinct personalities
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 with App Router
+### **Frontend**
+- **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **UI Components**: Radix UI with shadcn/ui
 - **State Management**: Zustand
-- **Real-time**: WebRTC for video/audio
+- **Real-time**: WebRTC for video/audio + Supabase Realtime
 - **Validation**: Zod schemas
+
+### **Backend & Database**
+- **[Supabase](https://supabase.com/)** - PostgreSQL database with real-time features
+- **[Supabase Auth](https://supabase.com/auth)** - Anonymous authentication system
+- **[Supabase Realtime](https://supabase.com/realtime)** - Live chat and updates
+- **Row Level Security** - Database-level access control
+
+### **Key Features**
+- **Real-time Chat** - Topic-based community chat rooms
+- **Mood Tracking** - Daily mood logs with analytics
+- **Gamification** - XP, levels, and achievement badges
+- **Anonymous Auth** - Privacy-first user system
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
+- **Node.js 18+** and npm/yarn
+- **[Supabase Account](https://supabase.com)** (free tier works great!)
 
-### Installation
+### Quick Setup
 
-1. Clone the repository
+1. **Clone the repository**
 ```bash
 git clone https://github.com/isoguv/togethr.git
 cd togethr
 ```
 
-2. Install dependencies
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
-3. Run the development server
+3. **Set up Supabase Backend** 🔧
+   Follow our **[Supabase Setup Guide](SUPABASE_SETUP.md)** to:
+   - Create your Supabase project
+   - Run the database schema
+   - Configure anonymous authentication
+   - Enable real-time features
+
+4. **Configure environment variables**
+   Create `.env.local` in your project root:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+5. **Run the development server**
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+6. **Open [http://localhost:3000](http://localhost:3000)** in your browser
+
+> 📚 **Need help?** Check out our detailed [Supabase Setup Guide](SUPABASE_SETUP.md) for step-by-step instructions!
 
 ## Project Structure
 
 ```
-src/
-├── app/                    # Next.js app router
-├── components/             # React components
-│   ├── community/          # Community chat interface
-│   ├── dashboard/          # Dashboard views
-│   ├── feedback/           # Session feedback
-│   ├── moderator/          # AI moderator components
-│   ├── onboarding/         # User onboarding flow
-│   ├── profile/            # User profile management
-│   ├── session/            # Live session interface
-│   └── ui/                 # Reusable UI components
-├── data/                   # Static data and configurations
-│   ├── avatars.ts          # Avatar definitions
-│   ├── badges.ts           # Gamification badges
-│   └── topics.ts           # Mental health topics
-├── lib/                    # Utilities and store
-│   ├── moderator/          # AI moderator system
-│   └── store.ts            # Zustand state management
-└── types/                  # TypeScript type definitions
+togethr/
+├── src/
+│   ├── app/                      # Next.js 15 App Router
+│   │   ├── api/                  # API routes (mood trends, etc.)
+│   │   ├── chat/[room]/         # Dynamic chat room pages
+│   │   └── page.tsx             # Main application page
+│   ├── components/              # React components
+│   │   ├── ui/                  # Shadcn/ui components
+│   │   ├── onboarding/          # User onboarding flow
+│   │   ├── community/           # Community chat interface
+│   │   ├── dashboard/           # Dashboard views
+│   │   ├── mood/                # Mood tracking components
+│   │   ├── session/             # Live session interface
+│   │   └── profile/             # User profile management
+│   ├── lib/
+│   │   ├── supabase/            # 🆕 Supabase integration
+│   │   │   ├── client.ts        # Supabase client setup
+│   │   │   ├── queries.ts       # Database query functions
+│   │   │   ├── realtime.ts      # Real-time subscriptions
+│   │   │   └── types.ts         # Database type definitions
+│   │   ├── store/               # 🆕 Zustand stores
+│   │   │   ├── user.ts          # User authentication & profile
+│   │   │   ├── chat.ts          # Real-time chat functionality
+│   │   │   └── mood.ts          # Mood tracking
+│   │   ├── moderator/           # AI moderator system
+│   │   └── store.ts             # Legacy unified store
+│   ├── types/                   # TypeScript definitions
+│   └── data/                    # Static data (avatars, topics, badges)
+├── supabase-schema.sql          # 🆕 Database schema setup
+├── SUPABASE_SETUP.md           # 🆕 Detailed setup guide
+└── public/                     # Static assets
 ```
+
+### 🆕 New Supabase Integration Features
+- **Real-time chat** with topic-based rooms
+- **User authentication** with anonymous login
+- **Persistent mood tracking** with analytics
+- **Gamification system** with XP and badges
+- **Row-level security** for data privacy
 
 ## Key Components
 
@@ -127,10 +182,48 @@ src/
 - AI-generated session summaries
 - Participation analytics and insights
 
+## 🗄️ Database Schema
+
+The Supabase backend includes four main tables:
+
+- **`users`** - User profiles with gamification data (XP, level, streaks)
+- **`messages`** - Chat messages organized by topic-based rooms  
+- **`badges`** - Achievement system for user engagement
+- **`moods`** - Daily mood tracking with analytics and trends
+
+All tables include **Row Level Security (RLS)** policies to ensure users can only access their own data while enabling public community chat.
+
+## 🚀 Deployment
+
+### Deploy to Vercel
+
+1. **Push to GitHub** and connect your repository to Vercel
+2. **Add environment variables** in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. **Update Supabase Auth settings** with your production domain
+4. **Deploy** - your app will be live in minutes!
+
+### Production Checklist
+- ✅ Supabase project created and configured
+- ✅ Database schema deployed
+- ✅ Anonymous authentication enabled  
+- ✅ Real-time features activated
+- ✅ Environment variables set in Vercel
+- ✅ Domain added to Supabase Auth settings
+
 ## Contributing
 
-This project follows conventional commit standards:
+We welcome contributions that help improve mental health support! 
 
+### Priority Areas
+- **🧠 Mental Health Features** - Therapist feedback on user experience
+- **♿ Accessibility** - Making the platform inclusive for all users  
+- **🌐 Internationalization** - Multi-language support
+- **📱 Mobile Experience** - Responsive design improvements
+- **🔒 Security** - Privacy and security enhancements
+
+### Commit Standards
 - `feat:` New features
 - `fix:` Bug fixes
 - `docs:` Documentation updates
@@ -141,6 +234,19 @@ This project follows conventional commit standards:
 ## License
 
 This project is private and proprietary.
+
+## ⚠️ Important Disclaimer
+
+**Togethr is designed to supplement, not replace, professional mental health care.** 
+
+- This platform provides peer support and self-help tools
+- Always consult qualified mental health professionals for serious concerns
+- In crisis situations, contact emergency services immediately
+
+### Crisis Resources
+- **US National Suicide Prevention Lifeline**: 988
+- **Crisis Text Line**: Text HOME to 741741
+- **International Crisis Lines**: [iasp.info/resources/Crisis_Centres](https://www.iasp.info/resources/Crisis_Centres/)
 
 ## Learn More
 

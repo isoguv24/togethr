@@ -18,12 +18,12 @@ import {
   TrendingUp,
   Clock
 } from 'lucide-react';
-import { useTogethrStore } from '@/lib/store';
+import { useAppStore } from '@/lib/store/app';
 
 export default function HeroSection() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const { setCurrentView } = useTogethrStore();
+  const { setCurrentView } = useAppStore();
 
   const testimonials = [
     {

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useTogethrStore } from '@/lib/store';
+import { useUserStore } from '@/lib/store/user';
+import { useAppStore } from '@/lib/store/app';
 import { getTopicConfig, getAllTopics } from '@/data/topics';
 import { getLevel, getAllBadges } from '@/data/badges';
 import { getAvatarsForLevel } from '@/data/avatars';
@@ -12,6 +13,13 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { 
   User, 
   Settings, 
@@ -27,15 +35,28 @@ import {
 export default function ProfileView() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedNickname, setEditedNickname] = useState('');
+  const [isSelectingTopic, setIsSelectingTopic] = useState(false);
   
-  const { 
-    user, 
-    updateUser, 
-    setCurrentView,
-    addNotification 
-  } = useTogethrStore();
+  // Get user from the correct store
+  const { user, updateUser } = useUserStore();
+  
+  // Get UI actions from the app store
+  const { setCurrentView, addNotification } = useAppStore();
 
-  if (!user) return null;
+  console.log('👤 ProfileView: Rendering with user:', !!user, user?.id);
+
+  if (!user) {
+    console.log('⚠️ ProfileView: No user found, rendering fallback');
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('✅ ProfileView: User found, rendering profile interface');
 
   const topicConfig = getTopicConfig(user.mentalHealthTopic);
   const levelInfo = getLevel(user.xp);
@@ -75,13 +96,29 @@ export default function ProfileView() {
     }
   };
 
-  const handleTopicChange = (topicId: string) => {
-    updateUser({ mentalHealthTopic: topicId as any });
-    addNotification({
-      type: 'success',
-      title: 'Focus Updated',
-      message: 'Your therapy focus has been updated. You can join new groups with this topic.'
-    });
+  const handleTopicChange = async (topicId: string) => {
+    try {
+      console.log('🎯 Changing topic to:', topicId);
+      await updateUser({ mentalHealthTopic: topicId as any });
+      addNotification({
+        type: 'success',
+        title: 'Focus Updated',
+        message: 'Your therapy focus has been updated. You can join new groups with this topic.'
+      });
+    } catch (error: any) {
+      console.error('❌ Failed to update topic:', error);
+      console.error('❌ Error details:', {
+        message: error?.message,
+        stack: error?.stack,
+        name: error?.name,
+        cause: error?.cause
+      });
+      addNotification({
+        type: 'error',
+        title: 'Update Failed',
+        message: error?.message || 'Failed to update your therapy focus. Please try again.'
+      });
+    }
   };
 
   const earnedBadges = user.badges;
@@ -219,7 +256,11 @@ export default function ProfileView() {
                         <h3 className="font-semibold text-gray-900">{topicConfig.name}</h3>
                         <p className="text-sm text-gray-600">{topicConfig.description}</p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setIsSelectingTopic(true)}
+                      >
                         Change Focus
                       </Button>
                     </div>
@@ -300,7 +341,7 @@ export default function ProfileView() {
                 <CardContent>
                   {earnedBadges.length > 0 ? (
                     <div className="space-y-4">
-                      {earnedBadges.map((badge, index) => (
+                      {earnedBadges.map((badge: any, index: number) => (
                         <div key={index} className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
                           <div className="text-2xl">{badge.icon}</div>
                           <div className="flex-1">
@@ -331,7 +372,7 @@ export default function ProfileView() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {availableBadges.slice(0, 10).map((badge, index) => (
+                    {availableBadges.slice(0, 10).map((badge: any, index: number) => (
                       <div key={index} className="flex items-center space-x-3 p-3 border rounded-lg opacity-75">
                         <div className="text-2xl grayscale">{badge.icon}</div>
                         <div className="flex-1">
@@ -392,8 +433,9 @@ export default function ProfileView() {
                   <div className="space-y-2">
                     {[
                       { value: 'calm_listener', label: '🌱 Calm Listener', description: 'Gentle and quiet' },
-                      { value: 'reflective_thinker', label: '🕵️ Reflective Thinker', description: 'Asks questions' },
-                      { value: 'balanced_guide', label: '⚖️ Balanced Guide', description: 'Structured approach' }
+                      { value: 'encouraging_coach', label: '🏆 Encouraging Coach', description: 'Motivating and supportive' },
+                      { value: 'wise_sage', label: '🕵️ Wise Sage', description: 'Asks thoughtful questions' },
+                      { value: 'gentle_guide', label: '⚖️ Gentle Guide', description: 'Structured approach' }
                     ].map((persona) => (
                       <div
                         key={persona.value}
@@ -498,6 +540,49 @@ export default function ProfileView() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Topic Selection Modal */}
+      <Dialog open={isSelectingTopic} onOpenChange={setIsSelectingTopic}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Change Your Focus</DialogTitle>
+            <DialogDescription>
+              Select a new mental health topic to focus on. This will affect your session recommendations.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 mt-4">
+            {allTopics.map((topic) => (
+              <div
+                key={topic.id}
+                className={`p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] ${
+                  user.mentalHealthTopic === topic.id
+                    ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-300'
+                    : 'hover:bg-gray-50 hover:border-gray-300'
+                }`}
+                onClick={async () => {
+                  await handleTopicChange(topic.id);
+                  setIsSelectingTopic(false);
+                }}
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="text-3xl flex-shrink-0">{topic.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 mb-1">{topic.name}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{topic.description}</p>
+                    {user.mentalHealthTopic === topic.id && (
+                      <div className="mt-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          Current Focus
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 
