@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useTogethrStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { 
   ChevronLeft,
   ChevronRight,
@@ -20,9 +18,15 @@ interface MoodCalendarProps {
   onViewChange?: (view: 'tracker' | 'analytics') => void;
 }
 
+interface MoodEntry {
+  date: string;
+  mood: number;
+  notes?: string;
+}
+
 export default function MoodCalendar({ onDateSelect, onViewChange }: MoodCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const { entries, getMoodEntry } = useTogethrStore();
+  const [entries] = useState<MoodEntry[]>([]); // Mock data for now
 
   const today = new Date();
   const year = currentDate.getFullYear();
@@ -249,7 +253,7 @@ export default function MoodCalendar({ onDateSelect, onViewChange }: MoodCalenda
               }
 
               const dateString = new Date(year, month, day).toISOString().split('T')[0];
-              const moodEntry = getMoodEntry(dateString);
+              const moodEntry = entries.find(entry => entry.date === dateString);
               const todayClass = isToday(day) ? 'ring-2 ring-blue-500' : '';
               const futureClass = isFutureDate(day) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50';
 

@@ -1,358 +1,384 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useTogethrStore } from '@/lib/store';
+import { useUserStore } from '@/lib/store/user';
+import { useAppStore } from '@/lib/store/app';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import CategoryAwareModerator from '@/components/moderator/category-aware-moderator';
-import { getTopicConfig } from '@/data/topics';
 import { 
-  Send, 
-  Users, 
   ArrowLeft,
   Heart,
-  MessageCircle,
-  Globe,
-  Clock,
-  TrendingUp
+  Users,
+  Send,
+  Shield,
+  ChevronRight,
+  MessageCircle
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
+const COMMUNITIES = [
+  {
+    id: 'anxiety',
+    name: 'Anxiety Support',
+    description: 'A supportive space for those dealing with anxiety and related challenges.',
+    icon: '🌙',
+    memberCount: 234
+  },
+  {
+    id: 'depression',
+    name: 'Depression Support', 
+    description: 'Connect with others navigating depression and find encouragement.',
+    icon: '🌻',
+    memberCount: 189
+  },
+  {
+    id: 'stress',
+    name: 'Stress Management',
+    description: 'Share strategies and support for managing daily stress.',
+    icon: '🧘',
+    memberCount: 156
+  },
+  {
+    id: 'relationships',
+    name: 'Relationship Support',
+    description: 'Navigate relationship challenges with understanding peers.',
+    icon: '💝',
+    memberCount: 98
+  },
+  {
+    id: 'self-care',
+    name: 'Self-Care Circle',
+    description: 'Discover and share self-care practices that work.',
+    icon: '🌸',
+    memberCount: 167
+  }
+];
+
+interface Message {
+  id: string;
+  text: string;
+  timestamp: Date;
+  sender: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  isSystem?: boolean;
+}
 
 export default function CommunityChat() {
-  const [message, setMessage] = useState('');
   const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
+  const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
+  const { user } = useUserStore();
   const { 
-    user,
-    messages,
-    sendMessage,
-    addMessage,
-    setCurrentView
-  } = useTogethrStore();
+    setCurrentView, 
+    addNotification, 
+    sendCommunityMessage, 
+    communityMessages, 
+    setCommunityMessages 
+  } = useAppStore();
 
-  // Mock community data - bu gerçek uygulamada API'den gelecek
-  const communities = [
-    { 
-      id: 'anxiety-support', 
-      topic: 'anxiety', 
-      name: 'Anxiety Support', 
-      memberCount: 1247, 
-      activeNow: 23,
-      lastActivity: '2 minutes ago',
-      description: 'A safe space to discuss anxiety, share coping strategies, and support each other.'
-    },
-    { 
-      id: 'depression-warriors', 
-      topic: 'depression', 
-      name: 'Depression Warriors', 
-      memberCount: 892, 
-      activeNow: 15,
-      lastActivity: '5 minutes ago',
-      description: 'Finding strength together through the challenges of depression.'
-    },
-    { 
-      id: 'loneliness-connection', 
-      topic: 'loneliness', 
-      name: 'Connection Circle', 
-      memberCount: 567, 
-      activeNow: 8,
-      lastActivity: '1 hour ago',
-      description: 'Building meaningful connections and combating loneliness together.'
-    },
-    { 
-      id: 'self-love-journey', 
-      topic: 'self_esteem', 
-      name: 'Self-Love Journey', 
-      memberCount: 734, 
-      activeNow: 12,
-      lastActivity: '10 minutes ago',
-      description: 'Learning to love ourselves and build healthy self-esteem.'
+  const messages = selectedCommunity ? (communityMessages[selectedCommunity] || []) : [];
+
+  // Load demo messages when community is selected
+  useEffect(() => {
+    if (selectedCommunity && messages.length === 0) {
+      const demoMessages: Message[] = [
+        {
+          id: 'demo-1',
+          text: 'Welcome to our community! This is a safe space to share and support each other.',
+          timestamp: new Date(Date.now() - 60000),
+          sender: {
+            id: 'demo-user-1',
+            name: 'CommunityBot',
+            avatar: '/avatars/wise-owl.svg'
+          },
+          isSystem: true
+        },
+        {
+          id: 'demo-2', 
+          text: 'Hi everyone! Looking forward to connecting with you all.',
+          timestamp: new Date(Date.now() - 30000),
+          sender: {
+            id: 'demo-user-2',
+            name: 'HopefulSoul',
+            avatar: '/avatars/hopeful-butterfly.svg'
+          }
+        }
+      ];
+      setCommunityMessages(selectedCommunity, demoMessages);
     }
-  ];
+  }, [selectedCommunity, messages.length, setCommunityMessages]);
 
-  const currentCommunity = communities.find(c => c.id === selectedCommunity);
-  const topicConfig = currentCommunity ? getTopicConfig(currentCommunity.topic as any) : null;
-
-  // Mock messages for community - gerçek uygulamada WebSocket ile gelecek
-  const communityMessages = selectedCommunity ? [
-    {
-      id: 'msg1',
-      sessionId: selectedCommunity,
-      senderId: 'user1',
-      senderType: 'user' as const,
-      content: "Having a rough day today. Anyone else feeling overwhelmed?",
-      timestamp: new Date(Date.now() - 3600000),
-      type: 'text' as const,
-      reactions: []
-    },
-    {
-      id: 'msg2', 
-      sessionId: selectedCommunity,
-      senderId: 'user2',
-      senderType: 'user' as const,
-      content: "I hear you. Some days are just harder than others. What usually helps you feel better?",
-      timestamp: new Date(Date.now() - 3000000),
-      type: 'text' as const,
-      reactions: []
-    },
-    {
-      id: 'ai_msg1',
-      sessionId: selectedCommunity,
-      senderId: 'ai_moderator',
-      senderType: 'ai_moderator' as const,
-      content: "The community has been quiet lately. How is everyone doing?",
-      timestamp: new Date(Date.now() - 1800000),
-      type: 'ai_prompt' as const,
-      reactions: []
-    }
-  ] : [];
-
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [communityMessages]);
+  }, [messages]);
 
-  // Handle AI moderator messages for community
-  const handleModeratorMessage = (content: string) => {
-    if (!selectedCommunity || !user) return;
-    
-    const moderatorMessage = {
-      id: `ai_${Date.now()}`,
-      sessionId: selectedCommunity,
-      senderId: 'ai_moderator',
-      senderType: 'ai_moderator' as const,
-      content,
-      timestamp: new Date(),
-      type: 'ai_prompt' as const,
-      reactions: []
-    };
-    
-    addMessage(moderatorMessage);
-  };
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !user || !selectedCommunity) return;
 
-  const handleSendMessage = () => {
-    if (message.trim() && selectedCommunity) {
-      sendMessage(message.trim());
-      setMessage('');
+    const messageContent = newMessage.trim();
+    setNewMessage('');
+
+    try {
+      console.log(`📤 Sending community message to ${selectedCommunity}:`, messageContent);
+      
+      await sendCommunityMessage(selectedCommunity, messageContent, {
+        id: user.id,
+        name: user.nickname,
+        avatar_id: user.avatar.id
+      });
+      
+      console.log('✅ Community message sent successfully');
+    } catch (error) {
+      console.error('❌ Failed to send community message:', error);
+      addNotification({
+        type: 'error',
+        title: 'Message Failed',
+        message: 'Failed to send your message. Please try again.'
+      });
+      setNewMessage(messageContent);
     }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
-  if (!selectedCommunity) {
-    // Community List View
+  const selectedCommunityData = COMMUNITIES.find(c => c.id === selectedCommunity);
+
+  if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => setCurrentView('dashboard')}
-              className="absolute top-8 left-8"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-            
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mb-4">
-              <Users className="h-8 w-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Support</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Join always-active support communities. Connect with others who understand your journey, 
-              share experiences, and find support whenever you need it.
-            </p>
-          </div>
-
-          {/* Communities Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {communities.map((community) => {
-              const config = getTopicConfig(community.topic as any);
-              return (
-                <Card 
-                  key={community.id} 
-                  className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
-                  onClick={() => setSelectedCommunity(community.id)}
-                >
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-3 h-3 rounded-full ${community.activeNow > 0 ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
-                        <div className="text-3xl">{config.icon}</div>
-                        <div>
-                          <CardTitle className="text-lg">{community.name}</CardTitle>
-                          <p className="text-sm text-gray-600">{config.name}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 mb-4 text-sm">{community.description}</p>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          <Users className="h-4 w-4" />
-                          <span>{community.memberCount.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Globe className="h-4 w-4" />
-                          <span>{community.activeNow} online</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-4 w-4" />
-                        <span>{community.lastActivity}</span>
-                      </div>
-                    </div>
-
-                    <Button className="w-full mt-4" variant="outline">
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Join Community
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Stats Section */}
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="p-6 text-center">
-                <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-lg">Always Active</h3>
-                <p className="text-gray-600 text-sm">24/7 support from your community</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Heart className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                <h3 className="font-semibold text-lg">Safe & Supportive</h3>
-                <p className="text-gray-600 text-sm">AI-moderated for a positive environment</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-lg">Find Your Tribe</h3>
-                <p className="text-gray-600 text-sm">Connect with people who understand</p>
-              </CardContent>
-            </Card>
-          </div>
+      <div className="h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to access community chat.</p>
         </div>
       </div>
     );
   }
 
-  // Community Chat View
   return (
-    <div className="h-screen bg-gray-50 flex flex-col">
-      {/* CategoryAwareModerator for community chat */}
-      {currentCommunity && user && (
-        <CategoryAwareModerator
-          category={currentCommunity.topic as any}
-          incomingMessages={communityMessages}
-          onModeratorMessage={handleModeratorMessage}
-          userCount={currentCommunity.activeNow}
-          mode="community_chat"
-          isActive={true}
-        />
-      )}
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => setSelectedCommunity(null)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </div>
             
-            <div className="flex items-center space-x-3">
-              <div className="text-2xl">{topicConfig?.icon}</div>
-              <div>
-                <h1 className="font-semibold text-gray-900">{currentCommunity?.name}</h1>
-                <p className="text-sm text-gray-600">
-                  {currentCommunity?.activeNow} online • {currentCommunity?.memberCount} members
+            <div className="flex items-center space-x-2">
+              <Heart className="h-6 w-6 text-blue-600" />
+              <span className="text-xl font-bold text-gray-900">Togethr Communities</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {!selectedCommunity ? (
+          // Community List
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h1 className="text-3xl font-bold text-gray-900">Community Support</h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Connect with others who understand your journey. Join supportive communities 
+                where you can share experiences and find encouragement.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {COMMUNITIES.map((community) => (
+                <Card 
+                  key={community.id}
+                  className="cursor-pointer transition-all hover:shadow-lg hover:scale-105"
+                  onClick={() => setSelectedCommunity(community.id)}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="text-2xl">{community.icon}</div>
+                        <div>
+                          <CardTitle className="text-lg">{community.name}</CardTitle>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Users className="h-4 w-4 text-gray-500" />
+                            <span className="text-sm text-gray-500">{community.memberCount} members</span>
+                          </div>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <CardDescription>{community.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Community Guidelines */}
+            <Card className="max-w-3xl mx-auto">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Shield className="h-5 w-5 text-green-600" />
+                  <span>Community Guidelines</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">✨ Be Kind & Supportive</h4>
+                    <p className="text-gray-600">Treat everyone with respect and empathy</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">🔒 Respect Privacy</h4>
+                    <p className="text-gray-600">Don't share personal information</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">🛡️ Stay Safe</h4>
+                    <p className="text-gray-600">Report inappropriate behavior</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">💬 Share Thoughtfully</h4>
+                    <p className="text-gray-600">Keep conversations helpful and positive</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          // Chat Interface
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center space-x-4 mb-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedCommunity(null)}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Communities
+              </Button>
+              <div className="flex items-center space-x-3">
+                <div className="text-2xl">{selectedCommunityData?.icon}</div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{selectedCommunityData?.name}</h2>
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-500">{selectedCommunityData?.memberCount} members</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Card className="h-96 flex flex-col">
+              {/* Messages Area */}
+              <CardContent className="flex-1 p-4 overflow-y-auto">
+                {messages.length === 0 ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>No messages yet. Start the conversation!</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex items-start space-x-3 ${
+                          message.isSystem ? 'justify-center' : ''
+                        }`}
+                      >
+                        {!message.isSystem && (
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={message.sender.avatar} alt={message.sender.name} />
+                            <AvatarFallback>{message.sender.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                        )}
+                        
+                        <div className={`flex-1 ${message.isSystem ? 'text-center' : ''}`}>
+                          {!message.isSystem && (
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="text-sm font-medium text-gray-900">
+                                {message.sender.name}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {(() => {
+                                  try {
+                                    const timestamp = message.timestamp instanceof Date 
+                                      ? message.timestamp 
+                                      : new Date(message.timestamp);
+                                    return timestamp.toLocaleTimeString([], { 
+                                      hour: '2-digit', 
+                                      minute: '2-digit' 
+                                    });
+                                  } catch (error) {
+                                    console.warn('Invalid timestamp:', message.timestamp);
+                                    return new Date().toLocaleTimeString([], { 
+                                      hour: '2-digit', 
+                                      minute: '2-digit' 
+                                    });
+                                  }
+                                })()}
+                              </span>
+                            </div>
+                          )}
+                          
+                          <div className={`${
+                            message.isSystem 
+                              ? 'inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full'
+                              : 'bg-white p-3 rounded-lg border shadow-sm text-gray-900'
+                          }`}>
+                            {message.text}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} />
+                  </div>
+                )}
+              </CardContent>
+
+              {/* Message Input */}
+              <div className="border-t border-gray-200 p-4">
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder={`Message ${selectedCommunityData?.name}...`}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={handleSendMessage}
+                    disabled={!newMessage.trim()}
+                    size="sm"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Remember to be kind and supportive to fellow community members
                 </p>
               </div>
-            </div>
+            </Card>
           </div>
-          
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-gray-900">Community Chat</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {communityMessages.map((msg) => (
-          <div
-            key={msg.id}
-            className={cn(
-              "flex space-x-3",
-              msg.senderType === 'ai_moderator' && "bg-blue-50 -mx-4 px-4 py-3 rounded-lg"
-            )}
-          >
-            <Avatar className="h-8 w-8 flex-shrink-0">
-              {msg.senderType === 'ai_moderator' ? (
-                <AvatarImage src="/avatars/ai-sage.svg" alt="AI Moderator" />
-              ) : (
-                <AvatarImage src="/avatars/calm-fox.svg" alt="User avatar" />
-              )}
-              <AvatarFallback>
-                {msg.senderType === 'ai_moderator' ? 'AI' : 'U'}
-              </AvatarFallback>
-            </Avatar>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2 mb-1">
-                <span className="text-sm font-medium text-gray-900">
-                  {msg.senderType === 'ai_moderator' 
-                    ? 'AI Moderator'
-                    : `Anonymous${msg.senderId.slice(-2)}`
-                  }
-                </span>
-                {msg.senderType === 'ai_moderator' && (
-                  <Badge variant="secondary" className="text-xs">AI Moderator</Badge>
-                )}
-                <span className="text-xs text-gray-500">
-                  {formatTime(msg.timestamp)}
-                </span>
-              </div>
-              <p className="text-sm text-gray-700">{msg.content}</p>
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Message Input */}
-      <div className="border-t border-gray-200 p-4 bg-white">
-        <div className="flex space-x-3 max-w-7xl mx-auto">
-          <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Share with the community..."
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            className="flex-1"
-          />
-          <Button onClick={handleSendMessage} disabled={!message.trim()}>
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   );

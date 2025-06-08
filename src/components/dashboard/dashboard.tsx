@@ -1,6 +1,7 @@
 'use client';
 
-import { useTogethrStore } from '@/lib/store';
+import { useUserStore } from '@/lib/store/user';
+import { useAppStore } from '@/lib/store/app';
 import { getTopicConfig } from '@/data/topics';
 import { getLevel } from '@/data/badges';
 import { Button } from '@/components/ui/button';
@@ -10,12 +11,10 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Users, 
-  Clock, 
   Trophy, 
   Star, 
   Play, 
   Settings, 
-  LogOut,
   Heart,
   MessageCircle,
   Video,
@@ -27,28 +26,59 @@ import {
 } from 'lucide-react';
 
 export default function Dashboard() {
+  // Get user from the new user store
+  const { user, logout } = useUserStore();
+  
+  // Get UI state and actions from the app store
   const { 
-    user, 
-    isInQueue, 
-    queuePosition, 
-    estimatedWaitTime,
-    joinQueue,
-    leaveQueue,
-    logout,
+    joinSession,
     setCurrentView
-  } = useTogethrStore();
+  } = useAppStore();
 
-  if (!user) return null;
+  console.log('📊 Dashboard: user from store:', user);
+  console.log('📊 Dashboard: user properties check:', {
+    mentalHealthTopic: user?.mentalHealthTopic,
+    xp: user?.xp,
+    totalSessionsAttended: user?.totalSessionsAttended,
+    streakCount: user?.streakCount,
+    badges: user?.badges?.length,
+    avatar: user?.avatar,
+    nickname: user?.nickname,
+    preferredSessionMode: user?.preferredSessionMode
+  });
+  console.log('📊 Dashboard: store methods available:', {
+    joinSession: !!joinSession,
+    logout: !!logout,
+    setCurrentView: !!setCurrentView
+  });
+
+  if (!user) {
+    console.log('❌ Dashboard: No user found, returning null');
+    return null;
+  }
+
+  console.log('✅ Dashboard: User found, proceeding with render');
 
   const topicConfig = getTopicConfig(user.mentalHealthTopic);
   const levelInfo = getLevel(user.xp);
 
   const handleJoinSession = () => {
-    if (isInQueue) {
-      leaveQueue();
-    } else {
-      joinQueue(user.mentalHealthTopic, user.preferredSessionMode);
-    }
+    // Direkt session'a yönlendir - queue sistemini bypass et
+    console.log('🚀 Dashboard: Joining session directly');
+    
+    const mockSession = {
+      id: 'demo-session-1',
+      title: `${topicConfig.name} Support Circle`,
+      type: 'group-chat' as const,
+      topic: `Managing ${topicConfig.name}`,
+      participantCount: 4,
+      maxParticipants: 8,
+      isActive: true,
+      createdAt: new Date()
+    };
+
+    joinSession(mockSession);
+    setCurrentView('session');
   };
 
   const stats = [
@@ -80,39 +110,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Heart className="h-8 w-8 text-blue-600" />
-                <span className="text-xl font-bold text-gray-900">Togethr</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setCurrentView('profile')}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={logout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -160,200 +157,153 @@ export default function Dashboard() {
                   </div>
                   <Button 
                     onClick={() => setCurrentView('crisis')}
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-red-600 hover:bg-red-700 text-white"
                   >
-                    <AlertTriangle className="mr-2 h-4 w-4" />
+                    <AlertTriangle className="h-4 w-4 mr-2" />
                     Get Help Now
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Quick Mood Check */}
+            {/* Daily Mood Check */}
             <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Brain className="h-5 w-5 text-green-600" />
-                  <span>Daily Mood Check</span>
-                </CardTitle>
-                <CardDescription>
-                  How are you feeling today? Take a moment to track your mood.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-green-100 rounded-full">
+                      <Brain className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-green-900">Daily Mood Check</h3>
+                      <p className="text-sm text-green-700">How are you feeling today? Take a moment to track your mood.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
                     <div className="flex space-x-2">
-                      {['😢', '😔', '😐', '😊', '😄'].map((emoji, index) => (
-                        <button 
-                          key={index} 
-                          className="text-2xl hover:scale-110 transition-transform p-2 rounded-lg hover:bg-white/50"
+                      {['😰', '😔', '😐', '🙂', '😊'].map((emoji, index) => (
+                        <button
+                          key={index}
+                          className="text-2xl hover:scale-110 transition-transform"
+                          onClick={() => {
+                            // Mood tracking logic here
+                            console.log('Mood selected:', emoji);
+                          }}
                         >
                           {emoji}
                         </button>
                       ))}
                     </div>
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentView('mood')}
+                      className="border-green-300 text-green-700 hover:bg-green-50"
+                    >
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Track Mood
+                    </Button>
                   </div>
-                  
-                  <Button 
-                    variant="outline"
-                    onClick={() => setCurrentView('mood')}
-                  >
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Track Mood
-                  </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Join Session Card */}
-            <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <div className="text-2xl">{topicConfig.icon}</div>
-                  <span>{topicConfig.name} Session</span>
-                </CardTitle>
-                <CardDescription>
-                  {isInQueue 
-                    ? `You're in the queue! Position ${queuePosition}, estimated wait: ${estimatedWaitTime} minutes`
-                    : 'Join others who understand your journey in a supportive group session'
-                  }
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      {user.preferredSessionMode === 'video_enabled' ? (
-                        <Video className="h-4 w-4" />
-                      ) : (
-                        <MessageCircle className="h-4 w-4" />
-                      )}
-                      <span className="capitalize">
-                        {user.preferredSessionMode.replace('_', ' ')} Mode
-                      </span>
+            {/* Quick Actions */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Join Session */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleJoinSession}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center space-x-2 text-blue-600">
+                    <Video className="h-5 w-5" />
+                    <span>Join Group Session</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Connect with others in your {topicConfig.name.toLowerCase()} support group
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">4 people currently waiting</p>
+                      <p className="text-xs text-gray-500">Average wait: 2-3 minutes</p>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <Clock className="h-4 w-4" />
-                      <span>~60 minutes</span>
-                    </div>
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      <Play className="h-4 w-4 mr-2" />
+                      Join Now
+                    </Button>
                   </div>
-                  
-                  <Button 
-                    onClick={handleJoinSession}
-                    size="lg"
-                    className={isInQueue ? 'bg-red-600 hover:bg-red-700' : ''}
-                  >
-                    {isInQueue ? (
-                      <>
-                        <Clock className="mr-2 h-4 w-4" />
-                        Leave Queue
-                      </>
-                    ) : (
-                      <>
-                        <Play className="mr-2 h-4 w-4" />
-                        Join Session
-                      </>
-                    )}
-                  </Button>
-                </div>
+                </CardContent>
+              </Card>
 
-                {isInQueue && (
-                  <div className="mt-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <span>Finding your group...</span>
-                      <span>{estimatedWaitTime} min remaining</span>
+              {/* Community */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setCurrentView('community')}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center space-x-2 text-green-600">
+                    <MessageCircle className="h-5 w-5" />
+                    <span>Community Chat</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Join ongoing conversations and share experiences
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">12 active conversations</p>
+                      <p className="text-xs text-gray-500">Last message 2 min ago</p>
                     </div>
-                    <Progress value={(5 - estimatedWaitTime) * 20} className="w-full" />
+                    <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Chat
+                    </Button>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Community Chat Card */}
-            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Users className="h-6 w-6 text-purple-600" />
-                  <span>Community Support</span>
-                </CardTitle>
-                <CardDescription>
-                  Join always-active support communities. Connect with others 24/7 who understand your journey.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span>Always Active</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <MessageCircle className="h-4 w-4" />
-                      <span>Chat & Support</span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => setCurrentView('community')}
-                    size="lg"
-                    variant="outline"
-                    className="bg-white hover:bg-purple-50 border-purple-200"
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Join Communities
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Stats Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {stats.map((stat, index) => (
-                <Card key={index}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-lg bg-gray-100 ${stat.color}`}>
-                        <stat.icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">{stat.label}</p>
-                        <p className="text-lg font-semibold text-gray-900">{stat.value}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                </CardContent>
+              </Card>
             </div>
 
-            {/* Recent Activity */}
+            {/* Progress Section */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Your journey highlights</CardDescription>
+                <CardTitle className="flex items-center space-x-2">
+                  <Trophy className="h-5 w-5 text-amber-600" />
+                  <span>Your Progress</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {user.badges.length > 0 ? (
-                    user.badges.slice(0, 3).map((badge, index) => (
-                      <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="text-2xl">{badge.icon}</div>
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{badge.name}</p>
-                          <p className="text-sm text-gray-600">{badge.description}</p>
-                        </div>
-                        <Badge variant="secondary">{badge.rarity}</Badge>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      <Trophy className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                      <p>Start attending sessions to earn your first badges!</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {stats.map((stat, index) => (
+                    <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
+                      <stat.icon className={`h-6 w-6 mx-auto mb-2 ${stat.color}`} />
+                      <div className="text-lg font-semibold text-gray-900">{stat.value}</div>
+                      <div className="text-xs text-gray-600">{stat.label}</div>
                     </div>
-                  )}
+                  ))}
                 </div>
               </CardContent>
             </Card>
+
+            {/* Recent Badges */}
+            {user.badges.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Star className="h-5 w-5 text-yellow-600" />
+                    <span>Recent Achievements</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex space-x-4 overflow-x-auto pb-2">
+                    {user.badges.slice(0, 5).map((badge: any) => (
+                      <div key={badge.id} className="flex-shrink-0 text-center p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
+                        <div className="text-2xl mb-1">{badge.icon}</div>
+                        <div className="text-xs font-medium text-gray-900">{badge.name}</div>
+                        <div className="text-xs text-gray-600">{badge.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -365,36 +315,39 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Level {levelInfo.level}</span>
                     <span className="text-sm text-gray-600">{levelInfo.title}</span>
                   </div>
-                  <Progress value={levelInfo.progress} className="w-full" />
-                  <p className="text-xs text-gray-600">
-                    {Math.round(levelInfo.progress)}% to next level
-                  </p>
+                  <Progress 
+                    value={levelInfo.progress} 
+                    className="h-2"
+                  />
+                  <div className="flex items-center justify-between text-xs text-gray-600">
+                    <span>{Math.round(levelInfo.progress)}% to next level</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Topic Info */}
+            {/* Your Focus */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <span className="text-xl">{topicConfig.icon}</span>
-                  <span className="text-lg">Your Focus</span>
+                <CardTitle className="text-lg flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <span>Your Focus</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-900">{topicConfig.name}</h3>
-                  <p className="text-sm text-gray-600">{topicConfig.description}</p>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-gray-900">{topicConfig.name}</h4>
+                    <p className="text-sm text-gray-600 mt-1">{topicConfig.description}</p>
+                  </div>
                   
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-gray-900">Today's Reflection</h4>
-                    <p className="text-sm text-gray-600 italic">
-                      "{topicConfig.sessionPrompts[0]}"
-                    </p>
+                    <h5 className="text-sm font-medium text-gray-900">Today's Reflection</h5>
+                    <p className="text-sm text-gray-600 italic">"{topicConfig.sessionPrompts?.[0] || 'Take a moment to reflect on your progress today.'}"</p>
                   </div>
                 </div>
               </CardContent>
@@ -409,43 +362,27 @@ export default function Dashboard() {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
+                  onClick={() => setCurrentView('feedback')}
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Share Feedback
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
                   onClick={() => setCurrentView('community')}
                 >
-                  <Users className="mr-2 h-4 w-4" />
-                  Community Support
+                  <Heart className="h-4 w-4 mr-2" />
+                  Browse Resources
                 </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
                   onClick={() => setCurrentView('profile')}
                 >
-                  <Settings className="mr-2 h-4 w-4" />
-                  Update Preferences
+                  <Settings className="h-4 w-4 mr-2" />
+                  Account Settings
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => setCurrentView('feedback')}
-                >
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  View Past Sessions
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Support Resources */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Resources</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {topicConfig.supportingResources.slice(0, 3).map((resource, index) => (
-                    <div key={index} className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
-                      • {resource}
-                    </div>
-                  ))}
-                </div>
               </CardContent>
             </Card>
           </div>

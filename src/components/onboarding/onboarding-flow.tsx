@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTogethrStore } from '@/lib/store';
+import { useUserStore } from '@/lib/store/user';
 import { MentalHealthTopic, SessionMode, AIModeratorPersona } from '@/types/user';
 import { getAllTopics } from '@/data/topics';
 import { getAvatarsForLevel, AvatarConfig } from '@/data/avatars';
@@ -25,7 +25,7 @@ export default function OnboardingFlow() {
     selectedAvatarId: 'calm_fox'
   });
 
-  const { login, isLoading } = useTogethrStore();
+  const { loginAnonymous, isLoading } = useUserStore();
   const topics = getAllTopics();
   const avatars = getAvatarsForLevel(12); // Show 12 avatars in onboarding
 
@@ -48,11 +48,28 @@ export default function OnboardingFlow() {
   };
 
   const handleComplete = async () => {
+    console.log('🎯 Starting onboarding completion with data:', formData);
+    
     if (formData.nickname && formData.topic) {
-      await login(formData.nickname, formData.topic, {
-        sessionMode: formData.sessionMode,
-        aiModeratorPersona: formData.aiModeratorPersona,
-        selectedAvatarId: formData.selectedAvatarId
+      try {
+        console.log('✅ Form data valid, calling loginAnonymous...');
+        await loginAnonymous(
+          formData.nickname,
+          formData.selectedAvatarId,
+          formData.topic,
+          {
+            sessionMode: formData.sessionMode,
+            aiModeratorPersona: formData.aiModeratorPersona
+          }
+        );
+        console.log('🎉 Onboarding completion successful!');
+      } catch (error) {
+        console.error('❌ Onboarding completion failed:', error);
+      }
+    } else {
+      console.error('❌ Form data invalid:', { 
+        nickname: formData.nickname, 
+        topic: formData.topic 
       });
     }
   };
@@ -222,8 +239,7 @@ export default function OnboardingFlow() {
           <CardContent className="space-y-3">
             {[
               { value: 'chat_only', label: 'Chat Only', description: 'Text-based conversations only' },
-              { value: 'video_enabled', label: 'Video Enabled', description: 'Join with camera and microphone' },
-              { value: 'mixed', label: 'Mixed Mode', description: 'Choose each session' }
+              { value: 'video_enabled', label: 'Video Enabled', description: 'Join with camera and microphone' }
             ].map((mode) => (
               <div
                 key={mode.value}
@@ -249,8 +265,9 @@ export default function OnboardingFlow() {
           <CardContent className="space-y-3">
             {[
               { value: 'calm_listener', label: '🌱 Calm Listener', description: 'Gentle and quiet, speaks when needed' },
-              { value: 'reflective_thinker', label: '🕵️ Reflective Thinker', description: 'Asks thoughtful questions' },
-              { value: 'balanced_guide', label: '⚖️ Balanced Guide', description: 'Structured and organized approach' }
+              { value: 'encouraging_coach', label: '🏆 Encouraging Coach', description: 'Motivating and supportive guidance' },
+              { value: 'wise_sage', label: '🕵️ Wise Sage', description: 'Asks thoughtful, reflective questions' },
+              { value: 'gentle_guide', label: '⚖️ Gentle Guide', description: 'Structured and organized approach' }
             ].map((persona) => (
               <div
                 key={persona.value}
