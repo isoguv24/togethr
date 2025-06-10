@@ -62,7 +62,7 @@ const transformSupabaseBadge = (badge: SupabaseBadge) => ({
 });
 
 interface UserState {
-  user: any | null; // Using existing User type from your types - this needs to support badges properly
+  user: any | null; // Stored user profile with badges loaded separately
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
