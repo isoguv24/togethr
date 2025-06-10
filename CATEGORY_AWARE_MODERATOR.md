@@ -139,7 +139,7 @@ AI: "Your worth isn't determined by your productivity. You are worthy exactly as
 ## ⚙️ Technical Architecture
 
 ### Modular Design
-- **Prompt Templates**: Separated in `/lib/moderator/prompts.ts`
+- **Prompt Templates**: Separated in `src/lib/moderator/prompts.ts`
 - **Context Analysis**: Real-time sentiment and participation tracking
 - **Timer Management**: Multiple concurrent timers for different response types
 - **State Management**: Tracks conversation flow and moderator state
