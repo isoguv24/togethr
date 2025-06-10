@@ -150,11 +150,18 @@ export const useWebRTC = ({ roomId, isEnabled = true }: UseWebRTCProps = {}): We
   // Stop video stream
   const stopVideo = useCallback(() => {
     if (state.localStream) {
-      state.localStream.getTracks().forEach(track => track.stop());
+      // Stop only video tracks so audio can continue if enabled
+      state.localStream.getVideoTracks().forEach(track => track.stop());
+
+      const audioTracks = state.localStream.getAudioTracks();
+      const newStream = audioTracks.length > 0 ? new MediaStream(audioTracks) : null;
+
       setState(prev => ({
         ...prev,
-        localStream: null,
-        isVideoEnabled: false
+        localStream: newStream,
+        isVideoEnabled: false,
+        // Preserve current audio state
+        isAudioEnabled: audioTracks.length > 0 ? prev.isAudioEnabled : false
       }));
     }
     console.log('📹 Video stream stopped');
