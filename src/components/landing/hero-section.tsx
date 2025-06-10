@@ -56,13 +56,6 @@ export default function HeroSection() {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
-    return () => clearInterval(interval);
   }, [testimonials.length]);
 
   return (
