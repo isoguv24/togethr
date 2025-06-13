@@ -32,6 +32,18 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*.local
+.env
+.env.production
+.env.development
+
+# Supabase
+.supabase/
+
+# Secrets and API keys
+secrets/
+*.key
+*.pem
+*.p12
 
 # vercel
 .vercel
