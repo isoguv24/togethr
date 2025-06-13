@@ -58,3 +58,8 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# Private development documents
+DEVELOPMENT_ROADMAP.md
+INTERNAL_NOTES.md
+FUNDING_STRATEGY.md
