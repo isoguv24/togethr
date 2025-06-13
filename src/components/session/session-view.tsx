@@ -187,7 +187,7 @@ export default function SessionView() {
     return () => {
       stopVideo();
     };
-  }, [stopVideo]);
+  }, []); // Empty dependency array - only run on unmount
 
   if (!user) {
     console.log('⚠️ SessionView: No user found, rendering fallback');
