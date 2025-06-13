@@ -1,0 +1,42 @@
+{
+  "name": "unmute - Anonymous Mental Health Support",
+  "short_name": "unmute",
+  "description": "A safe, anonymous space for peer support sessions moderated by AI. Connect with others who understand your journey.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#06B6D4",
+  "orientation": "portrait-primary",
+  "categories": ["health", "medical", "social"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/unmute-logo-light.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/unmute-logo-dark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/unmute-logo-light.svg",
+      "sizes": "400x400",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "unmute mental health platform"
+    }
+  ],
+  "prefer_related_applications": false,
+  "scope": "/",
+  "related_applications": [],
+  "launch_handler": {
+    "client_mode": "navigate-new"
+  }
+} 
