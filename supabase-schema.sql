@@ -1,5 +1,5 @@
 -- ===============================================
--- TOGETHR DATABASE SCHEMA
+-- UNMUTE DATABASE SCHEMA
 -- ===============================================
 
 -- Enable necessary extensions

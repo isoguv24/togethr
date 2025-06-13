@@ -391,8 +391,8 @@ export const GENERAL_SAFETY_RESPONSES = [
 ];
 
 export const RESPONSE_TIMING = {
-  // Therapy Session Mode (Structured, time-limited sessions)
-  THERAPY_SESSION: {
+  // Support Circle Mode (Structured, time-limited sessions)
+  SUPPORT_CIRCLE: {
     SILENCE_THRESHOLD_MS: 5000, // 5 seconds of silence
     REGULAR_INTERVAL_MS: 60000, // 60 seconds regular check-in
     DISTRESS_RESPONSE_MS: 2000, // 2 seconds when distress detected

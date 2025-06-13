@@ -277,7 +277,7 @@ export const useMoodStore = create<MoodStore>()(
         },
       }),
       {
-        name: 'togethr-mood-store',
+        name: 'unmute-mood-store',
         partialize: (state) => ({
           selectedDate: state.selectedDate,
           calendarView: state.calendarView,

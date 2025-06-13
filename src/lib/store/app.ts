@@ -428,7 +428,7 @@ export const useAppStore = create<AppStore>()(
         setHasDailyMoodCheck: (completed) => set({ hasDailyMoodCheck: completed })
       }),
       {
-        name: 'togethr-app-store',
+        name: 'unmute-app-store',
         partialize: (state) => ({
           isVideoEnabled: state.isVideoEnabled,
           isAudioEnabled: state.isAudioEnabled,
@@ -439,6 +439,6 @@ export const useAppStore = create<AppStore>()(
         })
       }
     ),
-    { name: 'togethr-app-store' }
+    { name: 'unmute-app-store' }
   )
 ); 

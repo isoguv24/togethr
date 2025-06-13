@@ -1,4 +1,4 @@
-# Togethr 🧠💚
+# unmute 🧠💚
 
 > **A Next.js mental health platform with Supabase backend** that enables topic-based community support, real-time chat, gamification, and mood tracking for mental wellness.
 
@@ -8,7 +8,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 ## 🧪 Live Demo
-Try the project live: [togethr-iso.vercel.app](https://togethr-iso.vercel.app)
+Try the project live: [unmute.social](https://unmute.social)
 
 > **🚀 NEW: Now with Supabase Backend!** This version includes real-time chat, persistent data, user authentication, and mood tracking.
 
@@ -19,7 +19,7 @@ Join sessions with complete anonymity using nicknames and custom avatars
 
 ### 🤖 AI-Powered Moderation
 - **CategoryAwareModerator**: Intelligent AI moderators with category-specific behaviors
-- **Dual Mode Support**: Both structured therapy sessions and casual community chat
+- **Dual Mode Support**: Both structured support circles and casual community chat
 - **Real-time Analysis**: Message analysis, distress detection, and safety interventions
 - **Smart Timing**: Silence detection and context-aware check-ins
 
@@ -27,7 +27,7 @@ Join sessions with complete anonymity using nicknames and custom avatars
 Support for 10+ mental health areas: anxiety, depression, grief, trauma, loneliness, self-esteem, and more
 
 ### 💬 Two Types of Support
-- **Scheduled Group Therapy**: 45-60 minute structured sessions with active moderation
+- **Scheduled Support Circles**: 45-60 minute structured sessions with active moderation
 - **Community Chat**: 24/7 always-active support communities (Reddit-style)
 
 ### 🎮 Gamification
@@ -73,8 +73,8 @@ Choose from 12 unique avatars with distinct personalities
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/isoguv/togethr.git
-cd togethr
+git clone https://github.com/isoguv/unmute.git
+cd unmute
 ```
 
 2. **Install dependencies**
@@ -108,7 +108,7 @@ npm run dev
 ## Project Structure
 
 ```
-togethr/
+unmute/
 ├── src/
 │   ├── app/                      # Next.js 15 App Router
 │   │   ├── api/                  # API routes (mood trends, etc.)
@@ -151,7 +151,7 @@ togethr/
 ## Key Components
 
 ### CategoryAwareModerator System
-- **Dual Mode AI**: Adapts behavior for therapy sessions vs. community chat
+- **Dual Mode AI**: Adapts behavior for support circles vs. community chat
 - **Category-Specific Prompts**: Tailored responses for 10+ mental health topics
 - **Safety-First**: Crisis detection and professional support encouragement
 - **Smart Timing**: Configurable silence detection and check-in intervals
@@ -170,7 +170,7 @@ togethr/
 - Quick mood tracking and crisis support access
 
 ### Live Sessions & Community Chat
-- **Scheduled Sessions**: Structured 45-60 minute group therapy
+- **Scheduled Sessions**: Structured 45-60 minute support circles
 - **Community Chat**: 24/7 Reddit-style support groups
 - Real-time chat with AI moderation
 - Video participant grid for sessions
@@ -237,7 +237,7 @@ This project is private and proprietary.
 
 ## ⚠️ Important Disclaimer
 
-**Togethr is designed to supplement, not replace, professional mental health care.** 
+**unmute is designed to supplement, not replace, professional mental health care.** 
 
 - This platform provides peer support and self-help tools
 - Always consult qualified mental health professionals for serious concerns

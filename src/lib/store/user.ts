@@ -542,7 +542,7 @@ export const useUserStore = create<UserStore>()(
         },
       }),
       {
-        name: 'togethr-user-store',
+        name: 'unmute-user-store',
         partialize: (state) => ({ 
           user: state.user,
           isAuthenticated: state.isAuthenticated 

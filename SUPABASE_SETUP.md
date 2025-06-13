@@ -1,6 +1,6 @@
-# 🔧 Togethr Supabase Setup Guide
+# 🔧 unmute Supabase Setup Guide
 
-This guide will help you set up Supabase as the backend for your Togethr mental health platform.
+This guide will help you set up Supabase as the backend for your unmute mental health platform.
 
 ## 📋 Prerequisites
 
@@ -14,7 +14,7 @@ This guide will help you set up Supabase as the backend for your Togethr mental 
 2. **Create a new project**:
    - Click "New Project"
    - Choose your organization
-   - Enter project name: `togethr`
+   - Enter project name: `unmute`
    - Generate a strong database password
    - Select a region close to your users
    - Click "Create new project"
@@ -240,7 +240,7 @@ If you encounter issues:
 
 ---
 
-**🎉 You're all set!** Your Togethr app now has a fully functional Supabase backend with real-time chat, user authentication, gamification, and mood tracking. 
+**🎉 You're all set!** Your unmute app now has a fully functional Supabase backend with real-time chat, user authentication, gamification, and mood tracking. 
 
 ## 🛠️ Customization Options
 
@@ -304,4 +304,4 @@ If you encounter issues:
 
 ---
 
-**🎉 You're all set!** Your Togethr app now has a fully functional Supabase backend with real-time chat, user authentication, gamification, and mood tracking. 
+**🎉 You're all set!** Your unmute app now has a fully functional Supabase backend with real-time chat, user authentication, gamification, and mood tracking. 

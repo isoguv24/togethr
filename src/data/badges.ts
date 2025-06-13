@@ -42,7 +42,7 @@ export const BADGES: Record<string, BadgeConfig> = {
   first_step: {
     id: 'first_step',
     name: 'First Step',
-    description: 'You joined your first group therapy session',
+    description: 'You joined your first peer support session',
     icon: '🎖️',
     rarity: 'common',
     criteria: {

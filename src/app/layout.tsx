@@ -6,6 +6,7 @@ import Header from '@/components/ui/header';
 import NotificationToast from '@/components/ui/notification-toast';
 import { useUserStore } from '@/lib/store/user';
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -45,6 +46,18 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <Head>
+                  <title>unmute | Anonymous Mental Health Support Platform</title>
+                  <meta name="description" content="A safe, anonymous space for peer support sessions moderated by AI. Connect with others who understand your journey through topic-based mental health support." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/unmute-logo-light.svg" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#06B6D4" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="unmute" />
+        <link rel="apple-touch-icon" href="/unmute-logo-light.svg" />
+      </Head>
       <body className={inter.className}>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
           {/* Dynamic Header */}

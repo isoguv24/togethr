@@ -19,7 +19,7 @@ export interface CategoryAwareModeratorProps {
   incomingMessages: ChatMessage[];
   onModeratorMessage: (text: string) => void;
   userCount: number;
-  mode?: 'therapy_session' | 'community_chat'; // New mode prop
+  mode?: 'support_circle' | 'community_chat'; // New mode prop
   silenceDurationMs?: number;
   isActive?: boolean;
   sessionDurationMs?: number;
@@ -40,7 +40,7 @@ export default function CategoryAwareModerator({
   incomingMessages,
   onModeratorMessage,
   userCount,
-  mode = 'therapy_session',
+  mode = 'support_circle',
   silenceDurationMs,
   isActive = true,
   sessionDurationMs = 0
@@ -49,7 +49,7 @@ export default function CategoryAwareModerator({
   // Get timing configuration based on mode
   const timingConfig = mode === 'community_chat' 
     ? RESPONSE_TIMING.COMMUNITY_CHAT 
-    : RESPONSE_TIMING.THERAPY_SESSION;
+    : RESPONSE_TIMING.SUPPORT_CIRCLE;
   
   const defaultSilenceDuration = silenceDurationMs || timingConfig.SILENCE_THRESHOLD_MS;
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -126,7 +126,7 @@ export default function CategoryAwareModerator({
       }
     }
     
-    // Therapy session mode uses structured prompts
+    // Support circle mode uses structured prompts
     switch (context) {
       case 'silence':
         if (participationLevel === 'low') {

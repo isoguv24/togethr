@@ -1,6 +1,6 @@
 # Category-Aware AI Moderator
 
-The `CategoryAwareModerator` is a sophisticated AI moderation system for the Togethr platform that adapts its behavior, tone, and messaging based on the specific mental health category of each therapy session.
+The `CategoryAwareModerator` is a sophisticated AI moderation system for the unmute platform that adapts its behavior, tone, and messaging based on the specific mental health category of each therapy session.
 
 ## 🎯 Key Features
 
