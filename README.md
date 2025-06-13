@@ -1,3 +1,6 @@
+> **TL;DR:**  
+> Unmute is an anonymous mental health platform with AI-moderated group sessions and gamified support communities. Built with Next.js + Supabase.
+
 # unmute 🧠💚
 
 <div align="center">
