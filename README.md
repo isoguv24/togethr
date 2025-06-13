@@ -2,7 +2,7 @@
 
 <div align="center">
 
-```
+<pre>
 ██╗   ██╗███╗   ██╗███╗   ███╗██╗   ██╗████████╗███████╗
 ██║   ██║████╗  ██║████╗ ████║██║   ██║╚══██╔══╝██╔════╝
 ██║   ██║██╔██╗ ██║██╔████╔██║██║   ██║   ██║   █████╗  
@@ -11,25 +11,25 @@
  ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝
                                                           
     🧠 Mental Health • 💬 Community Support • 🎮 Gamification • 🔒 Anonymous
-```
+</pre>
 
 *Your voice matters. Your story heals. Your community awaits.*
 
 ---
 
-</div>
-
-> **A Next.js mental health platform with Supabase backend** that enables topic-based community support, real-time chat, gamification, and mood tracking for mental wellness.
+**A Next.js mental health platform with Supabase backend** that enables topic-based community support, real-time chat, gamification, and mood tracking for mental wellness.
 
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js%2015-black?logo=nextjs)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
+</div>
+
 ## 🧪 Live Demo
 Try the project live: [unmute.social](https://unmute.social)
 
-> **🚀 NEW: Now with Supabase Backend!** This version includes real-time chat, persistent data, user authentication, and mood tracking.
+**🚀 NEW: Now with Supabase Backend!** This version includes real-time chat, persistent data, user authentication, and mood tracking.
 
 ## Features
 
