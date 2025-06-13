@@ -131,7 +131,7 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" /> Welcome to Togethr
+                            <User className="h-5 w-5" /> Welcome to unmute
           </DialogTitle>
           <DialogDescription>
             Sign in to your account or join anonymously to get started.
@@ -251,7 +251,7 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
           <TabsContent value="anonymous" className="space-y-4">
             <div className="text-center space-y-4">
               <p className="text-muted-foreground text-sm">
-                Join anonymously to explore Togethr without creating an account. You'll get a random nickname and can start chatting right away.
+                Join anonymously to explore unmute without creating an account. You'll get a random nickname and can start chatting right away.
               </p>
               <Button
                 variant="outline"

@@ -10,13 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   ArrowLeft,
-  Heart,
   Users,
   Send,
   Shield,
   ChevronRight,
   MessageCircle
 } from 'lucide-react';
+import Image from 'next/image';
 
 const COMMUNITIES = [
   {
@@ -182,10 +182,18 @@ export default function CommunityChat() {
               </Button>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Heart className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">Togethr Communities</span>
-            </div>
+                          <div className="flex items-center space-x-2">
+                <div className="h-6 w-6 relative">
+                  <Image 
+                    src="/unmute-logo-light.svg" 
+                    alt="unmute logo" 
+                    width={24} 
+                    height={24}
+                    className="object-contain"
+                  />
+                </div>
+                <span className="text-xl font-bold text-gray-900">unmute Communities</span>
+              </div>
           </div>
         </div>
       </header>

@@ -11,7 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { Heart, Users, Shield, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Users, Shield, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
 type OnboardingStep = 'welcome' | 'nickname' | 'topic' | 'preferences' | 'avatar' | 'complete';
 
@@ -88,14 +89,23 @@ export default function OnboardingFlow() {
   const renderWelcome = () => (
     <div className="text-center space-y-8">
       <div className="space-y-4">
-        <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-          <Heart className="h-10 w-10 text-white" />
+        <div className="mx-auto w-32 h-32 relative">
+          <Image 
+            src="/unmute-logo-main.svg" 
+            alt="unmute logo" 
+            width={128} 
+            height={128}
+            className="object-contain"
+          />
         </div>
-        <h1 className="text-4xl font-bold text-gray-900">Welcome to Togethr</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          A safe, anonymous space for group therapy sessions moderated by AI. 
-          Connect with others who understand your journey.
-        </p>
+        <div className="space-y-4">
+          <p className="text-2xl text-gray-800 max-w-2xl mx-auto font-medium">
+            A safe, anonymous space for peer support sessions moderated by AI
+          </p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Connect with others who understand your journey
+          </p>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -104,7 +114,7 @@ export default function OnboardingFlow() {
             <Users className="h-8 w-8 text-blue-600 mx-auto mb-3" />
             <h3 className="font-semibold text-gray-900 mb-2">Find Your Tribe</h3>
             <p className="text-sm text-gray-600">
-              Connect with others facing similar challenges in supportive group sessions
+              Connect with others facing similar challenges in supportive peer sessions
             </p>
           </CardContent>
         </Card>
@@ -124,7 +134,7 @@ export default function OnboardingFlow() {
             <Sparkles className="h-8 w-8 text-purple-600 mx-auto mb-3" />
             <h3 className="font-semibold text-gray-900 mb-2">AI-Guided Growth</h3>
             <p className="text-sm text-gray-600">
-              Thoughtful AI moderators help facilitate meaningful conversations
+              Thoughtful AI companions help facilitate meaningful conversations
             </p>
           </CardContent>
         </Card>
@@ -141,7 +151,7 @@ export default function OnboardingFlow() {
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-gray-900">Choose Your Nickname</h2>
         <p className="text-gray-600">
-          This is how others will see you in sessions. Keep it anonymous and comfortable.
+          This is how others will see you in support circles. Keep it anonymous and comfortable.
         </p>
       </div>
 
@@ -226,7 +236,7 @@ export default function OnboardingFlow() {
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-gray-900">Customize Your Experience</h2>
         <p className="text-gray-600">
-          Set your preferences for how you'd like to participate in sessions.
+          Set your preferences for how you'd like to participate in support circles.
         </p>
       </div>
 
@@ -302,7 +312,7 @@ export default function OnboardingFlow() {
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold text-gray-900">Choose Your Avatar</h2>
         <p className="text-gray-600">
-          Select an avatar to represent you in sessions. You can change this anytime.
+          Select an avatar to represent you in support circles. You can change this anytime.
         </p>
       </div>
 
@@ -348,7 +358,7 @@ export default function OnboardingFlow() {
         </div>
         <h2 className="text-2xl font-bold text-gray-900">You're All Set!</h2>
         <p className="text-gray-600">
-          Welcome to Togethr, {formData.nickname}! You're ready to join your first group session.
+          Welcome to unmute, {formData.nickname}! You're ready to join your first support circle.
         </p>
       </div>
 
@@ -377,7 +387,7 @@ export default function OnboardingFlow() {
         size="lg" 
         className="w-full"
       >
-        {isLoading ? 'Creating Account...' : 'Enter Togethr'}
+                  {isLoading ? 'Creating Account...' : 'Enter unmute'}
       </Button>
     </div>
   );

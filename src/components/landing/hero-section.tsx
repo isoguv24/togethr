@@ -27,7 +27,7 @@ export default function HeroSection() {
 
   const testimonials = [
     {
-      text: "Togethr helped me find my voice again. The anonymous environment made all the difference.",
+      text: "unmute helped me find my voice again. The anonymous environment made all the difference.",
       author: "Sarah M.",
       topic: "Anxiety Support"
     },
@@ -115,7 +115,7 @@ export default function HeroSection() {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
-              Anonymous, AI-moderated group therapy sessions that connect you with people who truly understand your journey. 
+              Anonymous, AI-moderated peer support sessions that connect you with people who truly understand your journey. 
               <span className="text-blue-600 font-semibold"> Your healing begins here.</span>
             </p>
 
@@ -194,7 +194,7 @@ export default function HeroSection() {
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">AI Moderation</h3>
-              <p className="text-gray-600 mb-6">Intelligent AI guides create safe, structured therapeutic conversations.</p>
+                              <p className="text-gray-600 mb-6">Intelligent AI companions create safe, structured supportive conversations.</p>
               <Button variant="ghost" className="p-0 h-auto text-purple-600 hover:text-purple-700">
                 Learn more <ArrowRight className="w-4 h-4 ml-1" />
               </Button>

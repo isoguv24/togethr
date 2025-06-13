@@ -26,11 +26,11 @@ import {
   Trophy, 
   Star, 
   ArrowLeft,
-  Heart,
   Edit,
   Save,
   X
 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ProfileView() {
   const [isEditing, setIsEditing] = useState(false);
@@ -103,7 +103,7 @@ export default function ProfileView() {
       addNotification({
         type: 'success',
         title: 'Focus Updated',
-        message: 'Your therapy focus has been updated. You can join new groups with this topic.'
+        message: 'Your support topic has been updated. You can join new groups with this topic.'
       });
     } catch (error: any) {
       console.error('❌ Failed to update topic:', error);
@@ -116,7 +116,7 @@ export default function ProfileView() {
       addNotification({
         type: 'error',
         title: 'Update Failed',
-        message: error?.message || 'Failed to update your therapy focus. Please try again.'
+        message: error?.message || 'Failed to update your support topic. Please try again.'
       });
     }
   };
@@ -143,10 +143,18 @@ export default function ProfileView() {
               </Button>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Heart className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">Togethr</span>
-            </div>
+                          <div className="flex items-center space-x-2">
+                <div className="h-6 w-6 relative">
+                  <Image 
+                    src="/unmute-logo-light.svg" 
+                    alt="unmute logo" 
+                    width={24} 
+                    height={24}
+                    className="object-contain"
+                  />
+                </div>
+                <span className="text-xl font-bold text-gray-900">unmute</span>
+              </div>
           </div>
         </div>
       </header>
@@ -518,7 +526,7 @@ export default function ProfileView() {
             <Card>
               <CardHeader>
                 <CardTitle>Progress Over Time</CardTitle>
-                <CardDescription>Your journey with Togethr</CardDescription>
+                <CardDescription>Your journey with unmute</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
