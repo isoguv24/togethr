@@ -3,9 +3,28 @@
 import { useAppStore } from '@/lib/store/app';
 import { Button } from '@/components/ui/button';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function NotificationToast() {
   const { notifications, markNotificationRead } = useAppStore();
+
+  // Auto-dismiss notifications after 5 seconds (except errors)
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
+    notifications.forEach((notification) => {
+      if (!notification.read && notification.type !== 'error') {
+        const timer = setTimeout(() => {
+          markNotificationRead(notification.id);
+        }, 5000); // 5 seconds
+        timers.push(timer);
+      }
+    });
+
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
+  }, [notifications, markNotificationRead]);
 
   const getIcon = (type: string) => {
     switch (type) {
